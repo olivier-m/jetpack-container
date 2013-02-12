@@ -1,0 +1,10 @@
+{
+    "name": "container",
+    "fullName": "Jetpack container",
+    "description": "A 'container' loader providing a sandbox with its own require() for Mozilla Addon-SDK",
+    "author": "Olivier Meunier <olivier@neokraft.net>",
+    "version": "0.5",
+    "license": "MPL 2.0",
+
+    "lib": ""
+}
