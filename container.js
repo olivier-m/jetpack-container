@@ -118,9 +118,13 @@ const newContainer = function(root, options) {
     let sandbox = null;
 
     if (arguments.length == 1) {
-        // We assume root is options
-        options = root;
-        root = undefined;
+        if (typeof(root) === "string") {
+            options = {};
+        } else {
+            // We assume root is options
+            options = root;
+            root = undefined;
+        }
     }
 
     // Define root to data/modules if not defined
@@ -151,10 +155,9 @@ const newContainer = function(root, options) {
                 return evaluate(sandbox, code);
             }
             if (typeof(code) === "function") {
-                let r = evaluate(sandbox,
-                    "(function(gl) { return function(f) { return f.call(gl); }; })(this);"
-                );
-                return r(code);
+                let args = JSON.stringify(Array.prototype.slice.call(arguments).slice(1));
+                code = "(" + code.toSource() + ").apply(null, " + args + ")";
+                return evaluate(sandbox, code);
             }
         },
         get loader() {
