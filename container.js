@@ -113,7 +113,6 @@ const modLoader = function(root, options){
 
 
 const newContainer = function(root, options) {
-    let loader = null;
     let mainURI = null;
     let sandbox = null;
 
@@ -138,11 +137,12 @@ const newContainer = function(root, options) {
         root += "/";
     }
 
+    let loader = modLoader(root, options);
+
     return {
         main: function(mainFile) {
             mainFile = mainFile || 'void';
 
-            loader = modLoader(root, options);
             mainURI = resolveURI(mainFile, loader.mapping);
             main(loader, mainFile);
             sandbox = loader.sandboxes[mainURI];
