@@ -11,6 +11,7 @@ const {Cc,Ci,Cr,Cs,Cu, components} = require("chrome");
 const self = require("self");
 const {Loader, main, resolveURI, resolve, descriptor} = require('toolkit/loader');
 
+const { PlainTextConsole } = require('sdk/console/plain-text');
 const {mix} = require("sdk/core/heritage");
 const file = require("sdk/io/file");
 const {evaluate} = require("sdk/loader/sandbox")
@@ -43,7 +44,7 @@ const searchFile = function(name, paths) {
         name += ".js";
     }
     for (let i=0; i<paths.length; i++) {
-        path = file.join(paths[i], name);
+        path = file.join.apply(null, [paths[i]].concat(name.split("/")));
         if (file.exists(path)) {
             return path;
         };
@@ -105,8 +106,13 @@ const modLoader = function(root, options){
         }
     });
 
-    // Override globals to make `console` available, from gozala/scratch-kit:core.js
-    Object.defineProperties(loader.globals, descriptor(globals));
+    // Make globals available
+    let _globals = descriptor(globals);
+    delete(_globals.console);
+    Object.defineProperties(loader.globals, _globals);
+
+    // Provide a overridable console
+    loader.globals.console = new PlainTextConsole();
 
     return loader
 };
